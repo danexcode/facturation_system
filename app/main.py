@@ -1,11 +1,11 @@
-from maintk import window
-from frames import login
+from tkinter import ttk
+from app import App
 
+window = App()
 
-window.title("Log in")
-window.geometry("340x440")
-window.configure(bg="#333333")
-
-login.frame.pack()
+style = ttk.Style(window)
+window.tk.call("source", "theme/forest-light.tcl")
+window.tk.call("source", "theme/forest-dark.tcl")
+style.theme_use("forest-dark")
 
 window.mainloop()
