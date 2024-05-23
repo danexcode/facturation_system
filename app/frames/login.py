@@ -1,15 +1,19 @@
-import tkinter as tk
 from tkinter import ttk
-from .menu import Menu
+from tkinter import messagebox
+from database.connection import Connection
+
+db_service = Connection.get_instance()
 
 
 class Login(ttk.Frame):
     def __init__(self, container, controller, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
+        self.name = "Login"
         self.controller = controller
         self.columnconfigure(index=0, minsize=150)
         self.columnconfigure(index=1, minsize=150)
+        
         
         # Widgets locales (Labels)
         
@@ -42,6 +46,19 @@ class Login(ttk.Frame):
         
         
     def login(self):
-        print(f"User: {self.username_entry.get()}, Pass: {self.password_entry.get()}")
-        self.controller.show_frame(Menu)
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+        print(f"User: {username} Pass: {password}")
         
+        try:
+            db_service.connect(username, password)  
+            
+            self.controller.show_frame("Login", "Menu")
+            
+        #DatabaseError    
+        #ProgrammingError
+        except:
+            print("Hubo un error")
+            messagebox.showinfo(title="Error", message="Datos invalidos")
+        
+               

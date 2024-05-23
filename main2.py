@@ -1,7 +1,7 @@
+from mysql import connector
 import tkinter as tk
-import mysql.connector
 
-connection = mysql.connector.connect(
+connection = connector.connect(
     host="192.168.0.104",
     port=3306,
     user="danifanton2",
@@ -20,3 +20,6 @@ print("Read",cursor.rowcount,"row(s) of data.")
 for row in rows:
     print("Data row = (%s, %s, %s)" %(str(row[0]), str(row[1]), str(row[2])))
 
+window = tk.Tk()
+
+window.mainloop()

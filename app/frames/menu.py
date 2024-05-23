@@ -1,6 +1,4 @@
-import tkinter as tk
 from tkinter import ttk
-
 from .store import Store
 
 
@@ -9,7 +7,10 @@ class Menu(ttk.Frame):
         super().__init__(container, *args, **kwargs)
         self.columnconfigure(index=0, minsize=250)
         self.columnconfigure(index=1, minsize=250)
+        self.configure(width="1000", height="700")
         
+        self.name = "Menu"
+        self.controller = controller
         
         # Labels
         menu_label = ttk.Label(
@@ -19,8 +20,13 @@ class Menu(ttk.Frame):
         
         # Buttons
         store_button = ttk.Button(
-            self, text="Tienda", command=(lambda : controller.show_frame(Store)))
+            self, text="Tienda", command=self.goto_store)
         store_button.grid(row=1, column=0)
         
         inventory_button = ttk.Button(self, text="Inventario")
         inventory_button.grid(row=1, column=1)
+        
+    def goto_store(self):
+        Store.load_products(self.controller.all_frames["Store"])
+        self.controller.show_frame("Menu", "Store")
+        
