@@ -28,6 +28,7 @@ class Menu(ttk.Frame):
             self, text="Inventario",
             command=self.goto_inventory)
         inventory_button.grid(row=1, column=1)
+    
         
     def goto_inventory(self):
         Inventory.load_products(self.controller.all_frames["Inventory"])

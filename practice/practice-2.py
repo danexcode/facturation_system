@@ -4,7 +4,7 @@ import openpyxl
 
 
 def load_data():
-    path = "C:/Users/User/Documents/cursos/proyecto_db/people.xlsx"
+    path = "C:/Users/User/Documents/cursos/proyecto_db/practice/people.xlsx"
     workbook = openpyxl.load_workbook(path)
     sheet = workbook.active
     
@@ -26,7 +26,7 @@ def insert_row():
     employment_status = "Employed" if is_checked.get() else "Unemployed"
     
     # Insert row into Excel sheet
-    path = "C:/Users/User/Documents/cursos/proyecto_db/people.xlsx"
+    path = "C:/Users/User/Documents/cursos/proyecto_db/practice/people.xlsx"
     workbook = openpyxl.load_workbook(path)
     sheet = workbook.active
     
