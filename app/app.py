@@ -4,6 +4,7 @@ from tkinter import ttk
 from frames.login import Login
 from frames.menu import Menu
 from frames.store import Store
+from frames.inventory import Inventory
 
 
 class App(tk.Tk):
@@ -31,7 +32,7 @@ class App(tk.Tk):
         # Se instancian cada uno de los frames creados,
         # se añaden al diccionario de frames
         # finalmente se colocan todos en el frame principal
-        for F in (Login, Menu, Store):
+        for F in (Login, Menu, Store, Inventory):
             frame = F(principal_container, self)
             self.all_frames[frame.name] = frame
             #frame.grid(row=0, column=0, sticky="news")

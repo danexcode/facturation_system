@@ -1,5 +1,6 @@
 from tkinter import ttk
 from .store import Store
+from .inventory import Inventory
 
 
 class Menu(ttk.Frame):
@@ -23,8 +24,14 @@ class Menu(ttk.Frame):
             self, text="Tienda", command=self.goto_store)
         store_button.grid(row=1, column=0)
         
-        inventory_button = ttk.Button(self, text="Inventario")
+        inventory_button = ttk.Button(
+            self, text="Inventario",
+            command=self.goto_inventory)
         inventory_button.grid(row=1, column=1)
+        
+    def goto_inventory(self):
+        Inventory.load_products(self.controller.all_frames["Inventory"])
+        self.controller.show_frame("Menu", "Inventory")
         
     def goto_store(self):
         Store.load_products(self.controller.all_frames["Store"])

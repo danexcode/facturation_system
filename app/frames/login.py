@@ -58,7 +58,6 @@ class Login(ttk.Frame):
         #DatabaseError    
         #ProgrammingError
         except:
-            print("Hubo un error")
-            messagebox.showinfo(title="Error", message="Datos invalidos")
+            messagebox.showerror(title="Error", message="Datos invalidos")
         
                

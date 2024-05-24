@@ -16,7 +16,6 @@ class Product():
         names = []
         for row in rows:
             names.append(row[0])
-        print(names)
         return names
         #except:
             #print("Ocurrio un error")
@@ -26,4 +25,15 @@ class Product():
         cursor = connection.cursor()
         cursor.execute(f'SELECT * FROM products WHERE name="{product}"')
         rows = cursor.fetchone()
+        return rows
+    
+    def get_products(self):
+        connection = db_service.get_connection()
+        cursor = connection.cursor()
+        select = "SELECT p.id, p.name, c.name, p.price, p.stock "
+        fom = "FROM products AS p INNER JOIN categories AS c "
+        fom2 = "ON p.category_id = c.id;"
+        sql = select + fom + fom2
+        cursor.execute(sql)
+        rows = cursor.fetchall()
         return rows

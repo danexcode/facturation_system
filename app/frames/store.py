@@ -1,6 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
+from mysql.connector.errors import ProgrammingError
+
 from services.product import Product
+from services.order import Order
 
 
 class Store(ttk.Frame):
@@ -10,6 +14,8 @@ class Store(ttk.Frame):
         self.name = "Store"
         self.controller = controller
         self.product_service = Product()
+        self.order_service = Order()
+        self.cart = []
         
         ### Options Frame ###
         options_frame = ttk.Frame(self)
@@ -61,7 +67,7 @@ class Store(ttk.Frame):
         
         preview_cols = ["Producto", "Precio", "Cantidad", "Subtotal"]
         self.table_treeview = ttk.Treeview(
-            table_frame, show="headings", columns=preview_cols, height=8)
+            table_frame, show="headings", columns=preview_cols, height=10)
         self.table_treeview.column("Producto", width=100, anchor="center")
         self.table_treeview.column("Precio", width=100, anchor="center")
         self.table_treeview.column("Cantidad", width=100, anchor="center")
@@ -80,9 +86,18 @@ class Store(ttk.Frame):
         self.total_treeview.heading("Total", text="Total", anchor="center")
         self.total_price = self.total_treeview.insert("", tk.END, values=("", "0"))
         
+        done_frame = ttk.Frame(self)
+        done_frame.grid(row=2, column=1)
+        
         purshased_button = ttk.Button(
-            table_frame, text="Procesar Compra")
-        purshased_button.grid(row=2, column=0, pady=(10, 0), sticky="w")
+            done_frame, text="Borrar Compra",
+            command=self.delete_progress)
+        purshased_button.grid(row=0, column=0, padx=(0, 100), sticky="w")
+        
+        delete_button = ttk.Button(
+            done_frame, text="Procesar Compra",
+            command=self.make_purshase)
+        delete_button.grid(row=0, column=1, padx=(100,0), sticky="e")
     
     
     def load_products(self):
@@ -100,6 +115,7 @@ class Store(ttk.Frame):
         
         # (id, category_id, name, stock, price)
         product_info = self.product_service.get_product(product)
+        self.cart.append(product_info)
         
         amount = self.amount_spinbox.get()
         amount = int(amount)
@@ -119,4 +135,65 @@ class Store(ttk.Frame):
             reg = self.table_treeview.item(child)
             total += float(reg["values"][3])
         return total
+    
+    
+    def delete_progress(self):
+        children = self.table_treeview.get_children()
+        for child in children:
+            self.table_treeview.delete(child)
+        self.total_treeview.item(self.total_price, values=("", "0"))
+        self.cart.clear()
+        
+        
+    def get_products(self):
+        # from this [(id, category_id, name, stock, price)]
+        # to this [(id, price, amount, stock)]
+        
+        crude_products = self.cart
+        products = []
+        
+        children = self.table_treeview.get_children()
+        for child, product in zip(children, crude_products):
+            row = self.table_treeview.item(child)
+            amount = row["values"][2]
+            id = product[0]
+            price = product[4]
+            stock = product[3]
+            final = (id, price, amount, stock)
+            products.append(final)
+            
+        return products
+        
+    
+    def make_purshase(self):
+        """
+        order = {
+            products: [(id, category_id, name, stock, price)], 
+            total = 200$,
+            client_id: 1
+        }
+        """
+        total = self.get_total()
+        client_id = 1
+        products = self.get_products()
+        
+        order = {
+            "products": products, 
+            "total": total, 
+            "client_id": client_id
+        }
+        
+        try:
+            self.order_service.insert_order(order)
+        except ValueError as e:
+            messagebox.showwarning(title="Error", message="No queda suficiente stock")
+        except ProgrammingError:
+            messagebox.showerror(title="Error", message="No tienes suficientes privilegios")
+        except:
+            messagebox.showerror(title="Error", message="Ocurrio un error")
+        else:
+            messagebox.showinfo(title="Info", message="Compra realizada")
+        finally:    
+            self.delete_progress()
+                        
         
